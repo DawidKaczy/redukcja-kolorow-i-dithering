@@ -2,6 +2,36 @@
 
 Aplikacja webowa będąca częścią **pracy inżynierskiej**. Porównuje metody redukcji liczby kolorów w obrazach cyfrowych oraz ocenia jakość wyników metryką SSIM.
 
+## Przykład działania
+
+Poniżej wynik przetwarzania przykładowego obrazu przy poziomie redukcji `4`.
+
+### Porównanie wszystkich metod
+
+![Porównanie metod: oryginał, kwantyzacja, dithering, Median Cut, Median Cut + dithering](examples/porownanie.png)
+
+| Metoda | Liczba kolorów | SSIM (vs oryginał) | Co widać |
+|--------|----------------|--------------------|----------|
+| Oryginał | ~74 925 | 1.0000 | Pełna paleta, gładkie przejścia |
+| Kwantyzacja | 26 | 0.6937 | „Plakatowy” efekt, ostre pasy kolorów |
+| Dithering (Floyd–Steinberg) | 39 | 0.2951 | Ziarnista tekstura, optycznie bliżej oryginału |
+| Median Cut | 4 | 0.7475 | Adaptacyjna paleta, duże płaskie obszary |
+| Median Cut + dithering | 4 | 0.3843 | Ta sama paleta, gładsze przejścia dzięki ditheringowi |
+
+> **Uwaga:** SSIM nie zawsze oddaje wrażenie wizualne — dithering często wygląda lepiej niż czysta kwantyzacja mimo niższej wartości SSIM.
+
+### Poszczególne wyniki
+
+| Oryginał | Kwantyzacja | Dithering |
+|:---:|:---:|:---:|
+| ![Oryginał](examples/00_oryginal.png) | ![Kwantyzacja](examples/01_kwantyzacja.png) | ![Dithering](examples/02_dithering.png) |
+
+| Median Cut | Median Cut + dithering |
+|:---:|:---:|
+| ![Median Cut](examples/03_median_cut.png) | ![Median Cut + dithering](examples/04_median_cut_dithering.png) |
+
+Przykładowe obrazy znajdują się w folderze [`examples/`](examples/).
+
 ## Co zawiera projekt
 
 ### Algorytmy przetwarzania obrazu
@@ -32,6 +62,7 @@ flaskProject/
 ├── rMedianCut_i_dithering_2sposob.py       # Median Cut + Median Cut z ditheringiem
 ├── aPrownanie.py                           # Porównanie SSIM
 ├── ileKolorow.py                           # Zliczanie unikalnych kolorów
+├── examples/                               # Przykładowe wyniki do README
 ├── templates/                              # Szablony HTML
 │   ├── index.html                          # Formularz wczytywania obrazu
 │   ├── indexv2.html                        # Wyniki wszystkich metod

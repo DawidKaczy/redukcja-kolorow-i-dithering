@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Porównanie Dithering i Halftoning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background-image: url('../static/uploads/tlov3.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .gallery-item {
+            flex: 1 1 45%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 10px 10px 8px rgba(255,255,255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .img-zoom-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+
+        }
+
+        .img-zoom-lens {
+            position: absolute;
+            border: 1px solid #ff0000;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .img-zoom-result {
+            border: 1px solid #d4d4d4;
+            width: 300px;
+            height: 300px;
+            margin-top: 10px;
+            background-color: white;
+
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -o-crisp-edges;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
+
+        .caption {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        a.back {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 10px;
+            text-decoration: none;
+            color: white;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 1);
+
+        }
+
+        a.back:hover {
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+   <a href="javascript:history.back()" class="back">Powrót</a>
+   <div class="gallery">
+        <div class="gallery-item">
+            <div class="caption">Kwantyzacja + Dithering</div>
+            <div class="caption" style="font-size: 0.9em; margin-bottom: 5px;">Ilość kolorów: {{ c_dith }}</div>
+
+            <div class="img-zoom-container">
+                <img id="img-dithering" src="{{ url_for('static', filename=obraz_dithering) }}" alt="Kwantyzacja plus Dithering Floyd–Steinberg">
+            </div>
+            <div id="result-dithering" class="img-zoom-result"></div>
+        </div>
+
+        <div class="gallery-item">
+            <div class="caption">MedianCut + Dithering</div>
+            <div class="caption" style="font-size: 0.9em; margin-bottom: 5px;">Ilość kolorów: {{ c_median_dith }}</div>
+
+            <div class="img-zoom-container">
+                <img id="img-mediancutdithering" src="{{ url_for('static', filename=obraz_median_cut_dithering) }}" alt="MedianCut plus Dithering Floyd–Steinberg">
+            </div>
+            <div id="result-mediancutdithering" class="img-zoom-result"></div>
+        </div>
+    </div>
+
+<script>
+    function syncZoom(img1ID, result1ID, img2ID, result2ID) {
+        var img1, result1, lens1, cx1, cy1;
+        var img2, result2, lens2, cx2, cy2;
+
+        img1 = document.getElementById(img1ID);
+        result1 = document.getElementById(result1ID);
+        img2 = document.getElementById(img2ID);
+        result2 = document.getElementById(result2ID);
+
+        lens1 = document.createElement("DIV");
+        lens1.setAttribute("class", "img-zoom-lens");
+        img1.parentElement.insertBefore(lens1, img1);
+
+        lens2 = document.createElement("DIV");
+        lens2.setAttribute("class", "img-zoom-lens");
+        img2.parentElement.insertBefore(lens2, img2);
+
+
+        lens1.addEventListener("click", function() {
+            window.open(img1.src, '_blank');
+        });
+
+        lens2.addEventListener("click", function() {
+            window.open(img2.src, '_blank');
+        });
+
+        cx1 = result1.offsetWidth / lens1.offsetWidth;
+        cy1 = result1.offsetHeight / lens1.offsetHeight;
+
+        cx2 = result2.offsetWidth / lens2.offsetWidth;
+        cy2 = result2.offsetHeight / lens2.offsetHeight;
+
+        result1.style.backgroundImage = "url('" + img1.src + "')";
+        result1.style.backgroundSize = (img1.width * cx1) + "px " + (img1.height * cy1) + "px";
+
+        result2.style.backgroundImage = "url('" + img2.src + "')";
+        result2.style.backgroundSize = (img2.width * cx2) + "px " + (img2.height * cy2) + "px";
+
+        function moveBothLenses(e) {
+            e.preventDefault();
+
+            var activeImg = e.target === img2 || e.target === lens2 ? img2 : img1;
+
+            var lensW = lens1.offsetWidth;
+            var lensH = lens1.offsetHeight;
+
+            var pos = getCursorPos(e, activeImg);
+
+            var x = pos.x - (lensW / 2);
+            var y = pos.y - (lensH / 2);
+
+            if (x > img1.width - lensW) {x = img1.width - lensW;}
+            if (x < 0) {x = 0;}
+            if (y > img1.height - lensH) {y = img1.height - lensH;}
+            if (y < 0) {y = 0;}
+
+            lens1.style.left = x + "px";
+            lens1.style.top = y + "px";
+            result1.style.backgroundPosition = "-" + (x * cx1) + "px -" + (y * cy1) + "px";
+
+            lens2.style.left = x + "px";
+            lens2.style.top = y + "px";
+            result2.style.backgroundPosition = "-" + (x * cx2) + "px -" + (y * cy2) + "px";
+        }
+
+        function getCursorPos(e, imageTarget) {
+            var a, x = 0, y = 0;
+            e = e || window.event;
+            a = imageTarget.getBoundingClientRect();
+            x = e.pageX - a.left;
+            y = e.pageY - a.top;
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return {x : x, y : y};
+        }
+
+        [lens1, img1, lens2, img2].forEach(element => {
+            element.addEventListener("mousemove", moveBothLenses);
+            element.addEventListener("touchmove", moveBothLenses);
+        });
+    }
+
+    window.addEventListener('load', function() {
+        syncZoom("img-dithering", "result-dithering", "img-mediancutdithering", "result-mediancutdithering");
+    });
+</script>
+
+</body>
+</html>

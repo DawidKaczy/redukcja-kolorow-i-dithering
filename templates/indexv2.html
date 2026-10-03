@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Galeria – Przetworzone obrazy</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-image: url('../static/uploads/tlov3.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .gallery {
+            max-width: 700px;
+            margin: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 10px 10px 8px rgba(255,255,255, 0.3);
+        }
+
+        .gallery-item-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .gallery-item-large img {
+            max-width: 350px;
+            max-height: 230px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .gallery-row {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+        }
+
+
+        .gallery-item {
+            flex: 1;
+            max-width: 650px;
+            height: 250px;
+            border-radius: 0px;
+            overflow: hidden;
+        }
+
+        .gallery-item img,
+        .gallery-item-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .caption {
+            margin: 1px 1px 1px 1px;
+            font-size: 14px;
+            color: white;
+        }
+
+        a.back {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 10px;
+            text-decoration: none;
+            color: white;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 1);
+
+        }
+
+        a.back:hover {
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/" class="back">Strona główna</a>
+<a href="{{ url_for(
+    'indexv3',
+    filename3=obraz_dithering.split('/')[-1],
+    c_dith=c_dith,
+
+    filename5=obraz_median_cut_dithering.split('/')[-1],
+    c_median_dith=c_median_dith
+
+) }}" class="back" style="top: 70px;">Porównanie</a>
+
+<div class="gallery">
+        <div class="gallery-item-large">
+            <a href="{{ url_for('static', filename=obraz_oryginalny) }}"
+               target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename=obraz_oryginalny) }}" alt="Oryginalny obraz">
+            </a>
+        <p class="caption">Oryginalny obraz SSIM: 1.00000</p>
+            <p class="caption">Ilość kolorów: {{ c_org }}</p>
+        </div>
+    <div class="gallery-row">
+        <div>
+            <div class="gallery-item">
+                <a href="{{ url_for('static', filename=obraz_kwantyzacja) }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename=obraz_kwantyzacja) }}" alt="Kwantyzacja">
+                </a>
+            </div>
+            <p class="caption">Redukcja kolorów: {{ slider }}×{{ slider }}×{{ slider }}={{ slider_wynik }}</p>
+            <p class="caption">Ilość kolorów: {{ c_kwant }}</p> <p class="caption">SSIM: {{ "{:.5f}".format(kwantyzacja_wynik) }}</p>
+        </div>
+
+        <div>
+            <div class="gallery-item">
+                <a href="{{ url_for('static', filename=obraz_median_cut) }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename=obraz_median_cut) }}" alt="Median Cut">
+                </a>
+            </div>
+            <p class="caption">Median Cut {{ slider }}</p>
+            <p class="caption">Ilość kolorów: {{ c_median }}</p> <p class="caption">SSIM: {{ "{:.5f}".format(minimalizacja_wynik) }}</p>
+        </div>
+    </div>
+    <div class="gallery-row">
+        <div>
+            <div class="gallery-item">
+                <a href="{{ url_for('static', filename=obraz_dithering) }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename=obraz_dithering) }}" alt="Dithering">
+                </a>
+            </div>
+            <p class="caption">Dithering Floyd–Steinberg</p>
+            <p class="caption">Ilość kolorów: {{ c_dith }}</p> <p class="caption">SSIM: {{ "{:.5f}".format(dithering_wynik) }}</p>
+        </div>
+
+        <div>
+            <div class="gallery-item">
+                <a href="{{ url_for('static', filename=obraz_median_cut_dithering) }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename=obraz_median_cut_dithering) }}" alt="Median Cut + Dithering">
+                </a>
+            </div>
+            <p class="caption">Dithering Floyd–Steinberg</p>
+            <p class="caption">Ilość kolorów: {{ c_median_dith }}</p> <p class="caption">SSIM: {{ "{:.5f}".format(median_cut_dithering_wynik) }}</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Środowisko wirtualne
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Wyniki przetwarzania (obrazy generowane przy uruchomieniu)
+output/
+static/uploads/oryginalny_obraz.png
+static/uploads/kwantyzacja_obraz.png
+static/uploads/dithering_obraz.png
+static/uploads/minimalizacja_kolorow_obraz.png
+static/uploads/median_cut_dithering_obraz.png
+
+# System
+.DS_Store
+Thumbs.db
+*.log
+.env

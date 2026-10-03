@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
 
-from rRedukcja_i_dithering_1sposob import kwantyzacja as kwantyzacja_baza, dithering as dithering_baza
-from rRedukcja_i_dithering_1sposob_i_szum import kwantyzacja as kwantyzacja_szum, dithering as dithering_szum
+from kwantyzacja_dithering import kwantyzacja as kwantyzacja_baza, dithering as dithering_baza
+from kwantyzacja_dithering_szum import kwantyzacja as kwantyzacja_szum, dithering as dithering_szum
 
-from rMedianCut_i_dithering_2sposob import minimalizacja_kolorow, median_cut_dithering
-from aPrownanie import porownaj_ssim
+from median_cut_dithering import minimalizacja_kolorow, median_cut_dithering
+from porownanie_ssim import porownaj_ssim
 
-from ileKolorow import policz_kolory
+from ile_kolorow import policz_kolory
 
 import os
 import random
@@ -54,24 +54,24 @@ def index():
             kwantyzacja_path = os.path.join(UPLOADS_FOLDER, "kwantyzacja_obraz.png")
             obraz_kwantyzacja.save(kwantyzacja_path)
 
-            prownanie_kwantyzacja = porownaj_ssim(obraz_path, kwantyzacja_path)
+            porownanie_kwantyzacja = porownaj_ssim(obraz_path, kwantyzacja_path)
 
             dithering_path = os.path.join(UPLOADS_FOLDER, "dithering_obraz.png")
             obraz_dithering.save(dithering_path)
 
-            prownanie_dithering = porownaj_ssim(obraz_path, dithering_path)
+            porownanie_dithering = porownaj_ssim(obraz_path, dithering_path)
 
             obraz_median_cut = minimalizacja_kolorow(obraz_path, slider_value)
             minimalizacja_kolorow_path = os.path.join(UPLOADS_FOLDER, "minimalizacja_kolorow_obraz.png")
             obraz_median_cut.save(minimalizacja_kolorow_path)
 
-            prownanie_minimalizacja = porownaj_ssim(obraz_path, minimalizacja_kolorow_path)
+            porownanie_minimalizacja = porownaj_ssim(obraz_path, minimalizacja_kolorow_path)
 
             obraz_median_cut_dithering = median_cut_dithering(obraz_path, slider_value)
             median_cut_dithering_path = os.path.join(UPLOADS_FOLDER, "median_cut_dithering_obraz.png")
             obraz_median_cut_dithering.save(median_cut_dithering_path)
 
-            prownanie_median_cut_dithering = porownaj_ssim(obraz_path, median_cut_dithering_path)
+            porownanie_median_cut_dithering = porownaj_ssim(obraz_path, median_cut_dithering_path)
 
 
             kolory_org = policz_kolory(obraz_path)
@@ -81,7 +81,7 @@ def index():
             kolory_median_dith = policz_kolory(obraz_median_cut_dithering)
 
             return redirect(url_for(
-                "indexv2",
+                "wyniki",
                 filename="oryginalny_obraz.png",
                 filename2="kwantyzacja_obraz.png",
                 filename3="dithering_obraz.png",
@@ -89,10 +89,10 @@ def index():
                 filename5="median_cut_dithering_obraz.png",
                 slider=slider_value,
                 slider_wynik=slider_wynik,
-                kwantyzacja_wynik=prownanie_kwantyzacja,
-                dithering_wynik=prownanie_dithering,
-                minimalizacja_wynik=prownanie_minimalizacja,
-                median_cut_dithering_wynik=prownanie_median_cut_dithering,
+                kwantyzacja_wynik=porownanie_kwantyzacja,
+                dithering_wynik=porownanie_dithering,
+                minimalizacja_wynik=porownanie_minimalizacja,
+                median_cut_dithering_wynik=porownanie_median_cut_dithering,
 
                 k_org = kolory_org,
                 k_kwant = kolory_kwant,
@@ -103,8 +103,8 @@ def index():
 
     return render_template("index.html")
 
-@app.route("/indexv2")
-def indexv2():
+@app.route("/wyniki")
+def wyniki():
     filename = request.args.get("filename")
     filename2 = request.args.get("filename2")
     filename3 = request.args.get("filename3")
@@ -125,7 +125,7 @@ def indexv2():
     k_median_dith = request.args.get("k_median_dith")
 
     return render_template(
-        "indexv2.html",
+        "wyniki.html",
         obraz_oryginalny=f"uploads/{filename}",
         obraz_kwantyzacja=f"uploads/{filename2}",
         obraz_dithering=f"uploads/{filename3}",
@@ -146,8 +146,8 @@ def indexv2():
     )
 
 
-@app.route("/indexv3")
-def indexv3():
+@app.route("/wyniki-dithering")
+def wyniki_dithering():
     filename5 = request.args.get("filename5")
     filename3 = request.args.get("filename3")
 
@@ -155,7 +155,7 @@ def indexv3():
     c_median_dith = request.args.get("c_median_dith")
 
     return render_template(
-        "indexv3.html",
+        "wyniki_dithering.html",
         obraz_dithering=f"uploads/{filename3}",
         c_dith=c_dith,
         obraz_median_cut_dithering=f"uploads/{filename5}",

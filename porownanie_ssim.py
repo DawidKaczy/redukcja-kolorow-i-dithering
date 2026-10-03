@@ -8,5 +8,5 @@ def porownaj_ssim(img_path1, img_path2):
 
     img1_np = np.array(img1)
     img2_np = np.array(img2)
-    score = ssim(img1_np, img2_np, full=True)
-    return score
+    score, _ = ssim(img1_np, img2_np, full=True)
+    return float(score)

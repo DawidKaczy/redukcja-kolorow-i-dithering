@@ -56,18 +56,18 @@ Przykładowe obrazy znajdują się w folderze [`examples/`](examples/).
 
 ```
 flaskProject/
-├── app.py                                  # Aplikacja Flask (routing, upload, porównania)
-├── rRedukcja_i_dithering_1sposob.py        # Kwantyzacja + dithering Floyd–Steinberg
-├── rRedukcja_i_dithering_1sposob_i_szum.py # To samo z opcjonalnym szumem
-├── rMedianCut_i_dithering_2sposob.py       # Median Cut + Median Cut z ditheringiem
-├── aPrownanie.py                           # Porównanie SSIM
-├── ileKolorow.py                           # Zliczanie unikalnych kolorów
-├── examples/                               # Przykładowe wyniki do README
-├── templates/                              # Szablony HTML
-│   ├── index.html                          # Formularz wczytywania obrazu
-│   ├── indexv2.html                        # Wyniki wszystkich metod
-│   └── indexv3.html                        # Dodatkowy widok porównania
-├── static/uploads/                         # Tła UI + zapisane obrazy
+├── app.py                          # Aplikacja Flask (routing, upload, porównania)
+├── kwantyzacja_dithering.py        # Kwantyzacja + dithering Floyd–Steinberg
+├── kwantyzacja_dithering_szum.py   # To samo z opcjonalnym szumem
+├── median_cut_dithering.py         # Median Cut + Median Cut z ditheringiem
+├── porownanie_ssim.py              # Porównanie SSIM
+├── ile_kolorow.py                  # Zliczanie unikalnych kolorów
+├── examples/                       # Przykładowe wyniki do README
+├── templates/
+│   ├── index.html                  # Formularz wczytywania obrazu
+│   ├── wyniki.html                 # Wyniki wszystkich metod
+│   └── wyniki_dithering.html       # Porównanie wariantów z ditheringiem
+├── static/uploads/                 # Tła UI + zapisane obrazy
 └── requirements.txt
 ```
 

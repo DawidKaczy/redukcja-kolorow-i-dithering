@@ -2,6 +2,8 @@
 
 Aplikacja webowa będąca częścią **pracy inżynierskiej**. Porównuje metody redukcji liczby kolorów w obrazach cyfrowych oraz ocenia jakość wyników metryką SSIM.
 
+📄 **Treść pracy (PDF):** [docs/INZ_1702_169432.pdf](docs/INZ_1702_169432.pdf)
+
 ## Przykład działania
 
 Poniżej wynik przetwarzania przykładowego obrazu przy poziomie redukcji `4`.
@@ -62,6 +64,7 @@ flaskProject/
 ├── median_cut_dithering.py         # Median Cut + Median Cut z ditheringiem
 ├── porownanie_ssim.py              # Porównanie SSIM
 ├── ile_kolorow.py                  # Zliczanie unikalnych kolorów
+├── docs/                           # PDF pracy inżynierskiej
 ├── examples/                       # Przykładowe wyniki do README
 ├── templates/
 │   ├── index.html                  # Formularz wczytywania obrazu
